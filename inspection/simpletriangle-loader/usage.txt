@@ -1,0 +1,65 @@
+SimpleTriangle loader first stage
+
+From the workspace root in PowerShell:
+
+  & ./inspection/simpletriangle-loader/loader.ps1 fixture
+  & ./inspection/simpletriangle-loader/loader.ps1 fixture --adapter warp
+  & ./inspection/simpletriangle-loader/loader.ps1 preflight 'C:\path\to\unpacked\SimpleTriangle'
+
+Startup and graphics shim prototype:
+
+  & ./inspection/simpletriangle-loader/shims/build.ps1
+  & ./inspection/simpletriangle-loader/loader.ps1 shim-fixture
+  & ./inspection/simpletriangle-loader/loader.ps1 shim-fixture --adapter warp
+
+The prototype uses separate startup and frame DLLs and the existing desktop
+D3D12 device shim. It checks initialization, display-profile access, frame
+scheduling, one-use tokens, same-device submission, GPU fence completion,
+and shutdown. It renders two 64 x 64 offscreen frames per run. The 1920 x 1080
+profile exercises the startup query independently of the capture size.
+The 60 Hz setting is checked for call order. It does not pace frame delivery.
+On Intel UHD Graphics and WARP both draws passed the CPU reference and
+the saved capture matched the respective previous frame exactly.
+
+Windowed SimpleTriangle:
+
+  & ./inspection/simpletriangle-loader/shims/show-simpletriangle.cmd
+
+The window shows one 640 x 640 frame and stays open until Esc or Close.
+The frame shim copies the rendered frame into a DXGI swap chain and presents
+it through desktop Direct3D 12. The same EXE accepts --window --warp for the
+software adapter. --window-check opens the window briefly and exits after
+presenting the frame, which passed on this PC's Intel UHD Graphics.
+
+The prototype uses local C interfaces. Treat Xbox DLL names, exported symbols,
+interface layouts, and actual PresentX/display behavior as separately validated
+requirements once a GDKX-built SimpleTriangle executable is available.
+
+Fixture creates a separate run directory with the local Windows triangle
+test executable and its graphics shim. It checks imports, starts the test,
+checks the exit code, and compares the new BMP against the saved reference
+for that adapter. The frame, logs, and dependency report are in the run folder.
+The test uses Microsoft's shaders and geometry via the existing desktop renderer.
+
+Preflight accepts an unpacked build directory or an EXE. It reads the game
+config when present, checks PE startup metadata, and inspects package-local
+dependencies recursively. It compares imported names and ordinals against DLL
+export tables. Candidate replacement DLLs can be checked with --shim-dir.
+Delay imports and forwarders are recorded for later runtime validation.
+Preflight opens binaries as data. Only the source-built Windows fixtures run.
+
+For the Xbox build, supply the Release Gaming.Xbox.Scarlett.x64 output.
+Keep SimpleTriangle.exe, VertexShader.cso, PixelShader.cso, MicrosoftGame.Config
+and any companion DLLs together. A missing TargetDeviceFamily field in the
+config alone does not identify the build target.
+
+Source-level startup map in the Microsoft sample checkout:
+  Main.cpp:51                   Initialize XGameRuntime before window setup.
+  DeviceResources.cpp:100       Create the Xbox D3D12 device.
+  SimpleTriangle.cpp:174,183    Load vertex and pixel shader objects.
+  DeviceResources.cpp:446,470   Establish frame timing and get the frame token.
+  DeviceResources.cpp:398       Present the first frame using PresentX.
+
+These are candidate interface requirements from source. The built console
+EXE will establish its actual imports and provide the first real test of the
+Xbox ABI. This stage verifies the Windows launch and capture path.

@@ -1,0 +1,43 @@
+diff --git a/tests/gdkx_bringup/samples/SimpleCompute/SimpleCompute.cpp b/tests/gdkx_bringup/samples/SimpleCompute/SimpleCompute.cpp
+index 785c18bd2816..ee418df70ecb 100644
+--- a/tests/gdkx_bringup/samples/SimpleCompute/SimpleCompute.cpp
++++ b/tests/gdkx_bringup/samples/SimpleCompute/SimpleCompute.cpp
+@@ -7,4 +7,6 @@
+
+ #include "pch.h"
++
++#include <cstdio>
+ #include "SimpleCompute.h"
+
+@@ -158,4 +160,8 @@
+     float elapsedTime = float(timer.GetElapsedSeconds());
+     m_renderFPS.Tick(elapsedTime);
++
++    // Switch after the first frame to exercise the normal mode transition.
++    if (m_frame == 1)
++        m_usingAsyncCompute = true;
+
+     auto pad = m_gamePad->GetState(GamePad::c_MergedInput);
+@@ -767,5 +773,5 @@
+
+                 const uint64_t fence = m_computeFenceValue++;
+-                m_computeCommandQueue->Signal(m_computeFence.Get(), fence);
++                DX::ThrowIfFailed(m_computeCommandQueue->Signal(m_computeFence.Get(), fence));
+                 if (m_computeFence->GetCompletedValue() < fence)								// block until async compute has completed using a fence
+                 {
+@@ -773,4 +779,16 @@
+                     WaitForSingleObject(m_computeFenceEvent.Get(), INFINITE);
+                 }
++                if (fence == 1)
++                {
++                    if (auto* log = std::fopen("async-dispatch.log", "w"))
++                    {
++                        std::fprintf(log, "queue_type=%u list_type=%u thread=%lu dispatch=%u,%u,1 fence=%llu completed=%llu\n",
++                            static_cast<unsigned>(m_computeCommandQueue->GetDesc().Type),
++                            static_cast<unsigned>(m_computeCommandList->GetType()), GetCurrentThreadId(),
++                            m_ThreadGroupX, m_ThreadGroupY, static_cast<unsigned long long>(fence),
++                            static_cast<unsigned long long>(m_computeFence->GetCompletedValue()));
++                        std::fclose(log);
++                    }
++                }
+                 m_resourceState[ComputeIndex()] = ResourceState_Computed;						// signal the buffer is now ready for render thread to use

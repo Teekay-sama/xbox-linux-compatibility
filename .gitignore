@@ -1,0 +1,47 @@
+__pycache__/
+*.py[cod]
+
+# Local build output
+bin/
+build/
+runs/
+*.exe
+*.dll
+*.so
+*.so.*
+*.obj
+*.lib
+*.exp
+*.pdb
+*.il[ck]
+*.bmp
+*.log
+*.cso
+*.dxil
+*.dxbc
+*.fssm
+*.deb
+*.bin
+
+# Local input and generated inspection data
+*.rpf
+*.xvd
+*.xvc
+*.xci
+*.xex
+/inspection/*-report.json
+/inspection/*-findings.txt
+/inspection/native-shader-samples/
+/inspection/shader-samples/
+/inspection/shader-proof/*.rdna2.txt
+/inspection/texture-proof/*.rdna2.txt
+/inspection/shader-proof/fullscreen_vs.h
+/inspection/texture-proof/fullscreen_texture_vs.h
+
+# Local credentials and editor settings
+.env
+.env.*
+*.pem
+*.pfx
+*.key
+.vscode/

@@ -1,0 +1,6 @@
+vkd3d:0140:trace:vkd3d_create_vk_device Using queue family 0 for direct command queues.
+vkd3d:0140:trace:vkd3d_create_vk_device Using queue family 1 for compute command queues.
+vkd3d:0140:trace:vkd3d_trace_physical_device_properties Device name: Microsoft Direct3D12 (Intel(R) UHD Graphics).
+vkd3d:0140:trace:vkd3d_trace_physical_device_properties Vendor ID: 0x8086, Device ID: 0x46b3.
+Wine process exit code: 124
+queue_type=2 list_type=2 thread=360 dispatch=240,135,1 fence=1 completed=1

@@ -1,0 +1,49 @@
+{
+  "render_validation_passed": true,
+  "sample": "SimpleCompute_GDKX_async.exe",
+  "source": "californiaAlmonds/OpenScarlett v0.6.0-alpha",
+  "sample_mode": "Same instrumented executable as the software test. It switches to async compute after the first frame.",
+  "sample_sha256": "1188808c6f97ff9ee937377154f954872399a07a52518eb83192bd4a0346049a",
+  "compute_shader_sha256": "0d69262e7afd04ae26840c07b0bb4c8cc998f4405a69ea220ed7e85935319758",
+  "environment": "Ubuntu 24.04 on WSL 2",
+  "wine": "10.14, with built-in D3D12 and DXGI and bundled vkd3d 1.17",
+  "vulkan_driver": "Mesa Dozen 26.3.1 from the signed Kisak Noble package, extracted locally",
+  "vulkan_devices": [
+    {
+      "name": "Microsoft Direct3D12 (Intel(R) UHD Graphics)",
+      "vendor_id": "0x8086",
+      "device_id": "0x46b3",
+      "type": 1,
+      "vulkan": "1.2.363",
+      "has_push_descriptors": false,
+      "has_robustness2": false
+    }
+  ],
+  "software_fallback_available_in_gpu_run": false,
+  "graphics_queue_family": 0,
+  "compute_queue_family": 1,
+  "first_compute_dispatch": "queue_type=2 list_type=2 thread=360 dispatch=240,135,1 fence=1 completed=1",
+  "capture": "fractal-intel-uhd.png",
+  "dimensions": [
+    1920,
+    1080
+  ],
+  "exact_pixel_matches_to_software_async_capture": 2069860,
+  "total_pixels": 2073600,
+  "exact_pixel_match_percent": 99.81963734567901,
+  "non_background_pixel_mask_intersection_over_union_percent": 95.76167801345873,
+  "process_timeout_seconds": 45,
+  "process_exit_code": 124,
+  "clean_shutdown_passed": false,
+  "failed_backends": [
+    {
+      "runtime": "Wine 9.0, DXVK 2.7.1 and vkd3d-proton 2.14.1",
+      "reason": "DXVK rejected the Intel adapter because it exposes Vulkan 1.2."
+    },
+    {
+      "runtime": "Wine 11.0 with built-in D3D12 and DXGI",
+      "reason": "Vulkan instance creation failed because Dozen lacks VK_KHR_external_semaphore_capabilities."
+    }
+  ],
+  "trace_excerpt": "trace-excerpt.txt"
+}
